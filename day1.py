@@ -51,12 +51,38 @@ def div(line):
 def sum_strs(itt):
     return sum(int(i) for i in itt)
 
-def get_max_calories(input):
+def get_calories_per_elf(input):
     line_groups = groupby(input, div)
     items_per_elf = (group for is_div, group in line_groups if not is_div)
-    calories_per_elf = (sum_strs(items) for items in items_per_elf)
-    return max(calories_per_elf)
+    return (sum_strs(items) for items in items_per_elf)
+
+def get_max_calories(input):
+    return max(get_calories_per_elf(input))
 
 input_file = "day1_input.txt"
 with open(input_file, 'r') as f:
     print(get_max_calories(f))
+
+"""
+--- Part Two ---
+By the time you calculate the answer to the Elves' question, they've already realized that the Elf carrying the most Calories of food might eventually run out of snacks.
+
+To avoid this unacceptable situation, the Elves would instead like to know the total Calories carried by the top three Elves carrying the most Calories. That way, even if one of those Elves runs out of snacks, they still have two backups.
+
+In the example above, the top three Elves are the fourth Elf (with 24000 Calories), then the third Elf (with 11000 Calories), then the fifth Elf (with 10000 Calories). The sum of the Calories carried by these three elves is 45000.
+
+Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
+"""
+
+def get_3_max_calorie(input):
+    top_3 = [0, 0, 0]
+    for one_elf in get_calories_per_elf(input):
+        top_3.append(one_elf)
+        top_3.sort(reverse=True)
+        top_3.pop()
+    return top_3
+
+
+input_file = "day1_input.txt"
+with open(input_file, 'r') as f:
+    print(sum(get_3_max_calorie(f)))
