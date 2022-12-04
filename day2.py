@@ -30,4 +30,38 @@ What would your total score be if everything goes exactly according to your stra
 
 """
 
+hands = {
+    'rock': {'beats': 'scissors', 'alias': 'AX', 'point': 1},
+    'paper': {'beats': 'rock', 'alias': 'BY', 'point': 2},
+    'scissors': {'beats': 'paper', 'alias': 'CZ', 'point': 3},
+}
+letter_to_hand = {
+    letter: hand
+    for hand, values in hands.items()
+    for letter in values['alias']
+}
+
+def hand_points(hand):
+    return hands[hand]['point']
+
+def win_points(their_hand, my_hand):
+    if their_hand == my_hand:
+        return 3
+    if hands[my_hand]['beats'] == their_hand:
+        return 6
+    return 0
+
+def get_hands(line):
+    their_letter, my_letter = line.split()
+    return letter_to_hand[their_letter], letter_to_hand[my_letter]
+
+def count_points(input):
+    total = 0
+    for line in input:
+        their_hand, my_hand = get_hands(line)
+        total += hand_points(my_hand) + win_points(their_hand, my_hand)
+    return total
+
 input_file = "day2_input.txt"
+with open(input_file, 'r') as f:
+    print(count_points(f))
