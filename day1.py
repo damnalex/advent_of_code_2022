@@ -52,10 +52,10 @@ def sum_strs(itt):
     return sum(int(i) for i in itt)
 
 def get_max_calories(input):
-    grouped = groupby(input, div)
-    filtered_groups = (group for is_div, group in grouped if not is_div)
-    summed_groups = (sum_strs(items) for items in filtered_groups)
-    return max(summed_groups)
+    line_groups = groupby(input, div)
+    items_per_elf = (group for is_div, group in line_groups if not is_div)
+    calories_per_elf = (sum_strs(items) for items in items_per_elf)
+    return max(calories_per_elf)
 
 input_file = "day1_input.txt"
 with open(input_file, 'r') as f:
