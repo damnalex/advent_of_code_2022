@@ -41,8 +41,31 @@ Some of the pairs have noticed that one of their assignments fully contains the 
 In how many assignment pairs does one range fully contain the other?
 
 """
+from itertools import chain
 
+def is_fully_overlapping(line):
+    ranges = line.split(',')
+    borns = [range.split("-") for range in ranges]
+    a1, a2, b1, b2 = [int(i) for i in chain(*borns)]
+    if (a1 == b1) or (a2 == b2):
+        return True
+    left = "+" if a1 < b1 else "-"
+    right = "+" if a2 > b2 else "-"
+    return left == right
+
+def count_overlaps(input):
+    return sum(
+        int(is_fully_overlapping(line))
+        for line in input
+    )
+
+###################################################
+
+def clean_input(input):
+    for line in input:
+        yield line.rstrip()
 
 input_file = "day4_input.txt"
 with open(input_file, 'r') as f:
-    pass
+    c_input = clean_input(f)
+    print(count_overlaps(c_input))
