@@ -33,10 +33,30 @@ In the above example, the priority of the item type that appears in both compart
 
 Find the item type that appears in both compartments of each rucksack. What is the sum of the priorities of those item types?
 """
+import string
+item_types = string.ascii_lowercase + string.ascii_uppercase
+item_priorities = {
+    letter: priority
+    for letter, priority in zip(item_types, range(1, 100))
+}
+
+def split_rucksack(ruck_sack):
+    middle_point = len(ruck_sack) // 2
+    return ruck_sack[:middle_point], ruck_sack[middle_point:]
+
+def find_common(inputA, inputB):
+    A, B = set(inputA), set(inputB)
+    return (A & B).pop()
 
 def sum_priorities(input):
-    pass
+    total = 0
+    for line in input:
+        C1, C2 = split_rucksack(line.rstrip())
+        wrong_item = find_common(C1, C2)
+        total += item_priorities[wrong_item]
+    return total
 
-input_file = "day2_input.txt"
+
+input_file = "day3_input.txt"
 with open(input_file, 'r') as f:
     print(sum_priorities(f))
