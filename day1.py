@@ -41,46 +41,22 @@ Find the Elf carrying the most Calories. How many total Calories is that Elf car
 """
 
 # My twist : use generators as much as practical
+# my twist v2 : using python builtins as much as practical
 
-def file_reader(file_path):
-    with open(file_path, 'r') as f:
-        for line in f:
-            yield line
+from itertools import groupby
 
-def match_food_item_to_elf(lines):
-    elf_id = 0
-    for line in lines:
-        if line != '\n':
-            item_calories = int(line)
-            yield (elf_id, item_calories)
-        else:
-            elf_id += 1
+def div(line):
+    return line == '\n'
 
-def calories_per_elf(calories_per_items):
-    current_elf = 0
-    current_elf_calories = 0
-    for item in  calories_per_items:
-        elf, item_calories = item
-        if elf != current_elf:
-            yield (current_elf, current_elf_calories)
-            current_elf = elf
-            current_elf_calories = item_calories
-        else:
-            current_elf_calories += item_calories
-    yield (current_elf, current_elf_calories)
+def sum_strs(itt):
+    return sum(int(i) for i in itt)
 
-def maximum(calories_per_elf):
-    max_cal = 0
-    max_elf = 0
-    for elf, calories in calories_per_elf:
-        if calories > max_cal:
-            max_cal = calories
-            max_elf = elf
-    return (max_elf, max_cal)
-
+def get_max_calories(input):
+    grouped = groupby(input, div)
+    filtered_groups = (group for is_div, group in grouped if not is_div)
+    summed_groups = (sum_strs(items) for items in filtered_groups)
+    return max(summed_groups)
 
 input_file = "day1_input.txt"
-reader = file_reader(input_file)
-matcher = match_food_item_to_elf(reader)
-cal_per_elf = calories_per_elf(matcher)
-print(maximum(cal_per_elf))
+with open(input_file, 'r') as f:
+    print(get_max_calories(f))
