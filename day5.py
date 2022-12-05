@@ -94,8 +94,11 @@ def convert_moves(str_input):
         yield get_move_info(line)
 
 
-def move_crate(stacks, _from, to):
-    stacks[to - 1].append(stacks[_from - 1].pop())
+def move_crate(stacks, _from, to, nbr=1):
+    crates = []
+    for _ in range(nbr):
+        crates.insert(0, stacks[_from - 1].pop())
+    stacks[to - 1] += crates
 
 
 def process(stacks, moves):
@@ -170,3 +173,18 @@ In this example, the CrateMover 9001 has put the crates in a totally different o
 
 Before the rearrangement process finishes, update your simulation so that the Elves know where they should stand to be ready to unload the final supplies. After the rearrangement procedure completes, what crate ends up on top of each stack?
 """
+
+
+def process2(stacks, moves):
+    for nbr, _from, to in moves:
+        move_crate(stacks, _from, to, nbr)
+
+
+input_file = "day5_input.txt"
+with open(input_file, "r") as f:
+    c_input = clean_input(f)
+    start_positions, moves = split_section(c_input)
+    stacks = build_stacks_from_start(start_positions)
+    tuple_moves = convert_moves(moves)
+    process2(stacks, tuple_moves)
+    print("".join(get_tops(stacks)))
