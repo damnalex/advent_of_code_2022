@@ -54,6 +54,60 @@ After the rearrangement procedure completes, what crate ends up on top of each s
 """
 
 
+def split_section(input):
+    """
+    return 2 itterables
+    first: from the last line of the start configuration section to the beginning of the file
+    second: from first line of the 'moves' section to the end of the file
+    """
+    first_section = []
+    for line in input:
+        if not line:
+            break
+        first_section.insert(0, line)
+    second_section = (l for l in input)
+    return first_section, second_section
+
+
+def build_stacks_from_start(start_positions):
+    nbr_stacks = 1 + len(start_positions[0]) // 4
+    stacks = [[] for i in range(nbr_stacks)]
+    for level in start_positions[1:]:
+        for stack_nbr in range(nbr_stacks):
+            try:
+                crate_letter = level[(stack_nbr * 4) + 1]
+            except IndexError:
+                break
+            # print(crate_letter)
+            if crate_letter != " ":
+                stacks[stack_nbr].append(crate_letter)
+    return stacks
+
+
+def get_move_info(line):
+    _, nbr, _, _from, _, to = line.split()
+    return int(nbr), int(_from), int(to)
+
+
+def convert_moves(str_input):
+    for line in str_input:
+        yield get_move_info(line)
+
+
+def move_crate(stacks, _from, to):
+    stacks[to - 1].append(stacks[_from - 1].pop())
+
+
+def process(stacks, moves):
+    for nbr, _from, to in moves:
+        for _ in range(nbr):
+            move_crate(stacks, _from, to)
+
+
+def get_tops(stacks):
+    return [stack.pop() for stack in stacks]
+
+
 ###################################################
 
 
@@ -65,4 +119,8 @@ def clean_input(input):
 input_file = "day5_input.txt"
 with open(input_file, "r") as f:
     c_input = clean_input(f)
-    pass
+    start_positions, moves = split_section(c_input)
+    stacks = build_stacks_from_start(start_positions)
+    tuple_moves = convert_moves(moves)
+    process(stacks, tuple_moves)
+    print("".join(get_tops(stacks)))
