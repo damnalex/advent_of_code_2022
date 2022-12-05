@@ -45,22 +45,27 @@ Find the Elf carrying the most Calories. How many total Calories is that Elf car
 
 from itertools import groupby
 
+
 def div(line):
-    return line == '\n'
+    return line == "\n"
+
 
 def sum_strs(itt):
     return sum(int(i) for i in itt)
+
 
 def get_calories_per_elf(input):
     line_groups = groupby(input, div)
     items_per_elf = (group for is_div, group in line_groups if not is_div)
     return (sum_strs(items) for items in items_per_elf)
 
+
 def get_max_calories(input):
     return max(get_calories_per_elf(input))
 
+
 input_file = "day1_input.txt"
-with open(input_file, 'r') as f:
+with open(input_file, "r") as f:
     print(get_max_calories(f))
 
 """
@@ -74,6 +79,7 @@ In the example above, the top three Elves are the fourth Elf (with 24000 Calorie
 Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
 """
 
+
 def get_3_max_calorie(input):
     top_3 = [0, 0, 0]
     for one_elf in get_calories_per_elf(input):
@@ -84,5 +90,5 @@ def get_3_max_calorie(input):
 
 
 input_file = "day1_input.txt"
-with open(input_file, 'r') as f:
+with open(input_file, "r") as f:
     print(sum(get_3_max_calorie(f)))

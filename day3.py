@@ -34,19 +34,22 @@ In the above example, the priority of the item type that appears in both compart
 Find the item type that appears in both compartments of each rucksack. What is the sum of the priorities of those item types?
 """
 import string
+
 item_types = string.ascii_lowercase + string.ascii_uppercase
 item_priorities = {
-    letter: priority
-    for letter, priority in zip(item_types, range(1, 100))
+    letter: priority for letter, priority in zip(item_types, range(1, 100))
 }
+
 
 def split_rucksack(ruck_sack):
     middle_point = len(ruck_sack) // 2
     return ruck_sack[:middle_point], ruck_sack[middle_point:]
 
+
 def find_common(inputA, inputB):
     A, B = set(inputA), set(inputB)
     return (A & B).pop()
+
 
 def sum_priorities(input):
     total = 0
@@ -58,7 +61,7 @@ def sum_priorities(input):
 
 
 input_file = "day3_input.txt"
-with open(input_file, 'r') as f:
+with open(input_file, "r") as f:
     print(sum_priorities(f))
 
 
@@ -89,6 +92,7 @@ Priorities for these items must still be found to organize the sticker attachmen
 Find the item type that corresponds to the badges of each three-Elf group. What is the sum of the priorities of those item types?
 """
 
+
 def line_grouping(input):
     group = []
     for line in input:
@@ -97,11 +101,13 @@ def line_grouping(input):
             yield group
             group = []
 
+
 def super_find_common(inputs):
     current_res = set(item_types)
     for input in inputs:
         current_res = current_res & set(input)
     return current_res.pop()
+
 
 def sum_prioroties(input):
     total = 0
@@ -112,5 +118,5 @@ def sum_prioroties(input):
 
 
 input_file = "day3_input.txt"
-with open(input_file, 'r') as f:
+with open(input_file, "r") as f:
     print(sum_prioroties(line_grouping(f)))

@@ -43,8 +43,9 @@ In how many assignment pairs does one range fully contain the other?
 """
 from itertools import chain
 
+
 def is_fully_overlapping(line):
-    ranges = line.split(',')
+    ranges = line.split(",")
     borns = [range.split("-") for range in ranges]
     a1, a2, b1, b2 = [int(i) for i in chain(*borns)]
     if (a1 == b1) or (a2 == b2):
@@ -53,20 +54,21 @@ def is_fully_overlapping(line):
     right = "+" if a2 > b2 else "-"
     return left == right
 
+
 def count_overlaps(input):
-    return sum(
-        int(is_fully_overlapping(line))
-        for line in input
-    )
+    return sum(int(is_fully_overlapping(line)) for line in input)
+
 
 ###################################################
+
 
 def clean_input(input):
     for line in input:
         yield line.rstrip()
 
+
 input_file = "day4_input.txt"
-with open(input_file, 'r') as f:
+with open(input_file, "r") as f:
     c_input = clean_input(f)
     print(count_overlaps(c_input))
 
@@ -85,21 +87,21 @@ So, in this example, the number of overlapping assignment pairs is 4.
 In how many assignment pairs do the ranges overlap?
 """
 
+
 def is_any_overlapping(line):
-    ranges = line.split(',')
+    ranges = line.split(",")
     borns = [range.split("-") for range in ranges]
-    a1, a2, b1, b2  = [int(i) for i in chain(*borns)]
-    b = [(a1,a2),(b1, b2)]
+    a1, a2, b1, b2 = [int(i) for i in chain(*borns)]
+    b = [(a1, a2), (b1, b2)]
     b.sort()
     return b[0][0] <= b[1][0] <= b[0][1]
 
+
 def count_any_overlaps(input):
-    return sum(
-        int(is_any_overlapping(line))
-        for line in input
-    )
+    return sum(int(is_any_overlapping(line)) for line in input)
+
 
 input_file = "day4_input.txt"
-with open(input_file, 'r') as f:
+with open(input_file, "r") as f:
     c_input = clean_input(f)
     print(count_any_overlaps(c_input))

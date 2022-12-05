@@ -62,7 +62,7 @@ def clean_input(input):
         yield line.rstrip()
 
 
-input_file = "day4_input.txt"
+input_file = "day5_input.txt"
 with open(input_file, "r") as f:
     c_input = clean_input(f)
-    print(count_overlaps(c_input))
+    pass
