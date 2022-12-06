@@ -37,10 +37,7 @@ input_file = "day6_input.txt"
 
 def character_stream(input_file):
     with open(input_file, "r") as f:
-        while True:
-            char = f.read(1)
-            if not char:
-                break
+        while char := f.read(1):
             yield char
 
 
