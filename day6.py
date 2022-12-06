@@ -30,3 +30,33 @@ nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg: first marker after character 10
 zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw: first marker after character 11
 How many characters need to be processed before the first start-of-packet marker is detected?
 """
+input_file = "day6_input.txt"
+
+
+def character_stream(input_file):
+    with open(input_file, "r") as f:
+        while True:
+            char = f.read(1)
+            if not char:
+                break
+            yield char
+
+
+def find_start_of_packet(stream):
+    """consume the stream until the start of packet
+    marker is reached. returns the number of char before
+    the start of the packet"""
+    a, b, c, d = "", next(stream), next(stream), next(stream)
+    count = 3
+    for next_char in stream:
+        count += 1
+        a, b, c, d = b, c, d, next_char
+        print(a, b, c, d)
+        if len(set([a, b, c, d])) == 4:
+            break
+    return count
+
+
+stream = character_stream(input_file)
+print("-------")
+print(find_start_of_packet(stream))
