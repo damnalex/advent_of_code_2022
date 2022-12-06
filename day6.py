@@ -30,6 +30,8 @@ nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg: first marker after character 10
 zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw: first marker after character 11
 How many characters need to be processed before the first start-of-packet marker is detected?
 """
+from collections import deque
+
 input_file = "day6_input.txt"
 
 
@@ -42,23 +44,29 @@ def character_stream(input_file):
             yield char
 
 
-def find_start_of_packet(stream):
-    """consume the stream until the start of packet
-    marker is reached. returns the number of char before
-    the start of the packet"""
-    a, b, c, d = "", next(stream), next(stream), next(stream)
-    count = 3
+def find_x_repeating(stream, X):
+    """consume the stream until :X repeating char are found
+    returns the number of chars consumed"""
+    observer = [""] + [next(stream) for _ in range(X - 1)]
+    observer = deque(observer)
+    count = X - 1
     for next_char in stream:
         count += 1
-        a, b, c, d = b, c, d, next_char
-        print(a, b, c, d)
-        if len(set([a, b, c, d])) == 4:
+        observer.popleft()
+        observer.append(next_char)
+        if len(set(observer)) == X:
             break
     return count
 
 
+def find_start_of_packet(stream):
+    """consume the stream until the start of packet
+    marker is reached. returns the number of char before
+    the start of the packet"""
+    return find_x_repeating(stream, 4)
+
+
 stream = character_stream(input_file)
-print("-------")
 print(find_start_of_packet(stream))
 
 """ 
@@ -76,3 +84,12 @@ nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg: first marker after character 29
 zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw: first marker after character 26
 How many characters need to be processed before the first start-of-message marker is detected?
 """
+
+
+def find_start_of_message(stream):
+    return find_x_repeating(stream, 14)
+
+
+print("-------")
+stream = character_stream(input_file)
+print(find_start_of_message(stream))
