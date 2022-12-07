@@ -77,3 +77,153 @@ To begin, find all of the directories with a total size of at most 100000, then 
 Find all of the directories with a total size of at most 100000. What is the sum of the total sizes of those directories?
 
 """
+
+
+class Folder:
+    def __init__(self, name, parent=None):
+        self.name = name
+        self.parent = parent
+        self.childrens = []
+        self.files = []
+
+    @property
+    def files_size(self):
+        return sum(file.size for file in self.files)
+
+    @property
+    def size(self):
+        # print(self.path)
+        # print(self.files_size, ' - '.join(file.name for file in self.files))
+        sub_size = sum(child.size for child in self.childrens)
+        return sub_size + self.files_size
+
+    @property
+    def path(self):
+        if not self.parent:
+            return "/"
+        return self.parent.path + '/' + self.name
+
+    def cd(self, name):
+        if name == "/":
+            if not self.parent:
+                return self
+            else:
+                return self.parent.cd("/")
+        if name == "..":
+            return self.parent
+        for child in self.childrens:
+            if child.name == name:
+                return child
+        new_folder = Folder(name, self)
+        self.childrens.append(new_folder)
+        return new_folder
+
+    def add_children(self, names):
+        childrens_to_add = set(names)
+        existing_children = {child.name for child in self.childrens}
+        childrens_to_add -= existing_children
+        for child in childrens_to_add:
+            self.childrens.append(Folder(child, self))
+        return self
+
+
+class File:
+    def __init__(self, name, size):
+        self.name = name
+        self.size = size
+
+
+def input_spliter(clean_input):
+    next_section = [next(clean_input)]
+    for line in clean_input:
+        if line.startswith("$"):
+            yield next_section
+            next_section = [line]
+        else:
+            next_section.append(line)
+    yield next_section
+
+
+def process_input(input):
+    root = Folder("/")
+    current_folder = root
+    for section in input:
+        # print(section)
+        if section[0].startswith("$ cd"):
+            current_folder = process_cd(section, current_folder)
+        else:
+            process_ls(section, current_folder)
+    return root
+
+
+def process_cd(section, current_folder):
+    _, _, name = section[0].split()
+    return current_folder.cd(name)
+
+def process_ls(section, current_folder):
+    file_and_children = section[1:]
+    files = []
+    children = []
+    for fc in file_and_children:
+        what, name = fc.split()
+        if what == 'dir':
+            children.append(name)
+        else:
+            files.append(File(name, int(what)))
+    if files:
+        current_folder.files = files
+    if children:
+        current_folder.add_children(children)
+
+def walk_tree(folder):
+    yield folder
+    for child in folder.childrens:
+        yield from walk_tree(child)
+
+########################################
+
+
+def clean_input(input):
+    for line in input:
+        yield line.rstrip()
+
+
+with open("day7_input.txt", "r") as f:
+    c_input = clean_input(f)
+    s_input = input_spliter(c_input)
+    root = process_input(s_input)
+    print(root.size)
+    print('sum of all folder that are at most 100000 in size')
+    print(sum(f.size for f in walk_tree(root) if f.size <= 100000))
+
+
+# # base test 
+# test_input = """\
+# $ cd /
+# $ ls
+# dir a
+# 14848514 b.txt
+# 8504156 c.dat
+# dir d
+# $ cd a
+# $ ls
+# dir e
+# 29116 f
+# 2557 g
+# 62596 h.lst
+# $ cd e
+# $ ls
+# 584 i
+# $ cd ..
+# $ cd ..
+# $ cd d
+# $ ls
+# 4060174 j
+# 8033020 d.log
+# 5626152 d.ext
+# 7214296 k\
+# """
+# test_c_input = (line for line in test_input.split("\n"))
+# test_s_input = input_spliter(test_c_input)
+# test_root = process_input(test_s_input)
+# print("test_root :", test_root.size, " - expcted : 48381165")
