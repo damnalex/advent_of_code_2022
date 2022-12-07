@@ -101,7 +101,7 @@ class Folder:
     def path(self):
         if not self.parent:
             return "/"
-        return self.parent.path + '/' + self.name
+        return self.parent.path + "/" + self.name
 
     def cd(self, name):
         if name == "/":
@@ -160,13 +160,14 @@ def process_cd(section, current_folder):
     _, _, name = section[0].split()
     return current_folder.cd(name)
 
+
 def process_ls(section, current_folder):
     file_and_children = section[1:]
     files = []
     children = []
     for fc in file_and_children:
         what, name = fc.split()
-        if what == 'dir':
+        if what == "dir":
             children.append(name)
         else:
             files.append(File(name, int(what)))
@@ -175,10 +176,12 @@ def process_ls(section, current_folder):
     if children:
         current_folder.add_children(children)
 
+
 def walk_tree(folder):
     yield folder
     for child in folder.childrens:
         yield from walk_tree(child)
+
 
 ########################################
 
@@ -192,12 +195,12 @@ with open("day7_input.txt", "r") as f:
     c_input = clean_input(f)
     s_input = input_spliter(c_input)
     root = process_input(s_input)
-    print(root.size)
-    print('sum of all folder that are at most 100000 in size')
-    print(sum(f.size for f in walk_tree(root) if f.size <= 100000))
+print(root.size)
+print("sum of all folder that are at most 100000 in size")
+print(sum(f.size for f in walk_tree(root) if f.size <= 100000))
 
 
-# # base test 
+# # base test
 # test_input = """\
 # $ cd /
 # $ ls
@@ -226,7 +229,9 @@ with open("day7_input.txt", "r") as f:
 # test_c_input = (line for line in test_input.split("\n"))
 # test_s_input = input_spliter(test_c_input)
 # test_root = process_input(test_s_input)
-# print("test_root :", test_root.size, " - expcted : 48381165")""" 
+# print("test_root :", test_root.size, " - expcted : 48381165")
+
+
 """ 
 --- Part Two ---
 Now, you're ready to choose a directory to delete.
@@ -245,3 +250,11 @@ Directories e and a are both too small; deleting them would not free up enough s
 
 Find the smallest directory that, if deleted, would free up enough space on the filesystem to run the update. What is the total size of that directory?
 """
+
+total_space = 70000000
+required_space = 30000000
+free_space = total_space - root.size
+space_to_free = required_space - free_space
+
+print("size of smallest folder that would release enough space")
+print(min(f_size for f in walk_tree(root) if (f_size := f.size) > space_to_free))
