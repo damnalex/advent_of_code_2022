@@ -32,3 +32,71 @@ Consider your map; how many trees are visible from outside the grid?
 
 """
 
+from itertools import product
+
+test_str_grid = """30373
+25512
+65332
+33549
+35390"""
+
+print(test_str_grid)
+
+test_grid = [
+    [3, 0, 3, 7, 3],
+    [2, 5, 5, 1, 2],
+    [6, 5, 3, 3, 2],
+    [3, 3, 5, 4, 9],
+    [3, 5, 3, 9, 0],
+]
+
+
+def get_grid_from_input(input):
+    return [[int(tree) for tree in line] for line in input.split("\n")]
+
+
+assert get_grid_from_input(test_str_grid) == test_grid
+
+
+def walk_grid(grid):
+    height = len(grid)
+    width = len(grid[0])
+    return product(range(height), range(width))
+
+
+def views_from_all_directions(XY, grid):
+    x, y = XY
+    height = len(grid)
+    left = grid[y][: x + 1]
+    # print(left)
+    righ = grid[y][x:][::-1]
+    # print(righ)
+    top = [grid[i][x] for i in range(y + 1)]
+    # print(top)
+    bot = [grid[i][x] for i in range(height - 1, y - 1, -1)]
+    # print(bot)
+    return [left, righ, top, bot]
+
+
+def last_tree_visible(row):
+    if len(row) == 1:
+        return True
+    return max(row[:-1]) < row[-1]
+
+
+def visible(directions):
+    return any(last_tree_visible(d) for d in directions)
+
+
+assert last_tree_visible([1, 2, 3, 4, 4, 4, 6])
+assert not last_tree_visible([1, 2, 3, 4, 4, 4])
+assert not last_tree_visible([1, 2, 3, 4, 3])
+
+
+print("---------")
+with open("day8_input.txt") as f:
+    grid = get_grid_from_input(f.read())
+    visible_trees = (
+        visible(views_from_all_directions(tree, grid)) for tree in walk_grid(grid)
+    )
+    print(sum(1 for tree in visible_trees if tree))
