@@ -242,4 +242,67 @@ So, there are 13 positions the tail visited at least once.
 
 Simulate your complete hypothetical series of motions. How many positions does the tail of the rope visit at least once?
 """
+from itertools import repeat
 
+test_input = """R 4
+U 4
+L 3
+D 1
+R 4
+D 1
+L 5
+R 2""".split('\n')
+
+test_result = (2, 2), (1, 2)
+
+
+def clean_input(input):
+    for line in input:
+        yield line.rstrip()
+
+
+def to_single_steps(stream):
+    for line in stream:
+        direction, nbr = line.split()
+        yield from repeat(direction, int(nbr))
+
+
+def move_head(head, direction):
+    x, y = head
+    move = {
+        "U": lambda x, y: (x, y + 1),
+        "D": lambda x, y: (x, y - 1),
+        "L": lambda x, y: (x - 1, y),
+        "R": lambda x, y: (x + 1, y),
+    }
+    return move[direction](x, y)
+
+
+def tail_must_move(new_head, old_tail):
+    Hx, Hy, Tx, Ty = *new_head, *old_tail
+    return (abs(Hx - Tx) > 1) or (abs(Hy - Ty) > 1)
+
+
+def compute_next_position(head, tail, direction):
+    new_head = move_head(head, direction)
+    if tail_must_move(new_head, tail):
+        return new_head, head
+    return new_head, tail
+
+def process(input):
+    head, tail = (0,0), (0,0)
+    tail_positions = set()
+    for step in to_single_steps(input):
+        head, tail = compute_next_position(head, tail, step)
+        tail_positions.add(tail)
+    nbr_pos = len(tail_positions)
+    return head, tail, nbr_pos
+
+
+print(process(clean_input(test_input)))
+print(test_result)
+print("---------")
+with open('day9_input.txt') as f:
+    c_input = clean_input(f)
+    head, tail, nbr_positions = process(c_input)
+    print(head, tail, nbr_positions)
